@@ -71,7 +71,7 @@ echo "Thank you for using DataCrunch.io's low-cost GPU servers!"
 #cleanup
 rm -rf ~/cuda_tmp
 function finish {
-    rm -rf $0
+    rm -rf $(dirname "$0")
 }
 
 trap finish EXIT
