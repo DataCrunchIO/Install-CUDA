@@ -69,4 +69,5 @@ rm -rf ~/cuda_tmp
 
 
 echo "Driver and CUDA installed. Please check 'nvidia-smi' to confirm."
+echo "Thank you for using DataCrunch.io's low-cost GPU servers!"
 exit 0
