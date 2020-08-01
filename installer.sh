@@ -12,16 +12,35 @@ if (( $EUID != 0 )); then
     exit
 fi
 
+#choose 10.2 or 11.0
+PS3='Please choose what version of CUDA you wish to install: '
+options=("CUDA 10.2" "CUDA 11.0" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "CUDA 10.2")
+			mkdir ~/cuda_tmp/
+            wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run -O ~/cuda_tmp/cuda.run
+            ;;
+        "CUDA 11.0")
+			mkdir ~/cuda_tmp/
+            wget http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_450.51.05_linux.run -O ~/cuda_tmp/cuda.run
+            ;;
+        "Quit")
+            exit 0
+            ;;
+        *) echo "invalid option $REPLY";;
+    esac
+done
+
 sudo apt update
 sudo apt install -y build-essential gcc-multilib dkms
 
-mkdir ~/cuda_tmp/
-wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run -O ~/cuda_tmp/cuda10_2.run
-chmod +x ~/cuda_tmp/cuda10_2.run
+chmod +x ~/cuda_tmp/cuda.run
 
 echo "Starting CUDA driver installer, this will take some time."
 
-sudo ~/cuda_tmp/cuda10_2.run --silent --driver --toolkit
+sudo ~/cuda_tmp/cuda.run --silent --driver --toolkit
 
 sudo bash -c "echo /usr/local/cuda/lib64/ > /etc/ld.so.conf.d/cuda.conf"
 
@@ -39,6 +58,9 @@ fi
 
 sudo chmod +x /etc/rc.local
 sudo /etc/rc.local
+
+#cleanup
+rm -rf ~/cuda_tmp/cuda.run
 
 
 echo "Driver and CUDA installed. Please check 'nvidia-smi' to confirm."
