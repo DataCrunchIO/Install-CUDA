@@ -65,7 +65,7 @@ sudo chmod +x /etc/rc.local
 sudo /etc/rc.local
 
 #cleanup
-rm -rf ~/cuda_tmp/cuda.run
+rm -rf ~/cuda_tmp
 
 
 echo "Driver and CUDA installed. Please check 'nvidia-smi' to confirm."
