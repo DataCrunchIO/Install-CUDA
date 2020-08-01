@@ -64,10 +64,14 @@ fi
 sudo chmod +x /etc/rc.local
 sudo /etc/rc.local
 
-#cleanup
-rm -rf ~/cuda_tmp
-
 
 echo "Driver and CUDA installed. Please check 'nvidia-smi' to confirm."
 echo "Thank you for using DataCrunch.io's low-cost GPU servers!"
-exit 0
+
+#cleanup
+rm -rf ~/cuda_tmp
+function finish {
+    rm -rf $0
+}
+
+trap finish EXIT
