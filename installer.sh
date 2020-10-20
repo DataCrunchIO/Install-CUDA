@@ -6,6 +6,7 @@ if [[ $(lsb_release -rs) == "18.04" || $(lsb_release -rs) == "20.04" ]]; then
        echo "Compatible Ubuntu version"
 else
        echo "This script was made for Ubuntu 18.04 or 20.04"
+	   exit
 fi
 
 if (( $EUID != 0 )); then
@@ -13,18 +14,20 @@ if (( $EUID != 0 )); then
     exit
 fi
 
-#Choose CUDA version:
-PS3='Please choose what version of CUDA you wish to install: '
-options=("CUDA 10.2" "CUDA 11.0" "Quit")
-select opt in "${options[@]}"
-do
-    case $opt in
-        "CUDA 10.2")
+if [ "$1" != "" ]; then
+    echo "an argument was given."
+    case $1 in
+        "10.0")
+            mkdir ~/cuda_tmp/
+            wget https://developer.nvidia.com/compute/cuda/10.0/Prod/local_installers/cuda_10.0.130_410.48_linux -O ~/cuda_tmp/cuda.run
+            break
+            ;;
+        "10.2")
             mkdir ~/cuda_tmp/
             wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run -O ~/cuda_tmp/cuda.run
             break
             ;;
-        "CUDA 11.0")
+        "11.0")
             mkdir ~/cuda_tmp/
             wget http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_450.51.05_linux.run -O ~/cuda_tmp/cuda.run
             break
@@ -34,7 +37,35 @@ do
             ;;
         *) echo "invalid option $REPLY";;
     esac
-done
+else
+    #Choose CUDA version manually:
+    PS3='No argument given. Please choose what version of CUDA you wish to install: '
+    options=("10.0" "10.2" "11.0" "Quit")
+    select opt in "${options[@]}"
+    do
+        case $opt in
+            "10.0")
+                mkdir ~/cuda_tmp/
+                wget https://developer.nvidia.com/compute/cuda/10.0/Prod/local_installers/cuda_10.0.130_410.48_linux -O ~/cuda_tmp/cuda.run
+                break
+                ;;
+            "10.2")
+                mkdir ~/cuda_tmp/
+                wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run -O ~/cuda_tmp/cuda.run
+                break
+                ;;
+            "11.0")
+                mkdir ~/cuda_tmp/
+                wget http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_450.51.05_linux.run -O ~/cuda_tmp/cuda.run
+                break
+                ;;
+            "Quit")
+                exit 0
+                ;;
+            *) echo "invalid option $REPLY";;
+        esac
+    done
+fi
 
 #Install prerequisites:
 sudo apt update
@@ -64,14 +95,10 @@ fi
 sudo chmod +x /etc/rc.local
 sudo /etc/rc.local
 
-
 echo "Driver and CUDA installed. Please check 'nvidia-smi' to confirm."
 echo "Thank you for using DataCrunch.io's low-cost GPU servers!"
 
 #cleanup
 rm -rf ~/cuda_tmp
-function finish {
-    rm -rf $(dirname "$0")
-}
 
 trap finish EXIT
