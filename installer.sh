@@ -100,3 +100,5 @@ echo "Thank you for using DataCrunch.io's low-cost GPU servers!"
 
 #cleanup
 rm -rf ~/cuda_tmp
+
+exit
